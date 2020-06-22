@@ -22,5 +22,3 @@ fi
 
 a2ensite humhub.conf
 a2enmod rewrite
-
-service apache2 restart

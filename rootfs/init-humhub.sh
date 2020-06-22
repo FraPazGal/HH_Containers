@@ -5,7 +5,7 @@ rm /var/www/humhub/protected/humhub/modules/installer/commands/InstallController
 cp InstallController.php /var/www/humhub/protected/humhub/commands
 
 cd /var/www/humhub/protected
-php yii install/write-db-config "$HH_MARIADB_ADDRESS" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS"
+php yii install/write-db-config "$HH_MARIADB_HOST" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS"
 php yii install/install-db
 
 php yii install/set-base-url "$HH_SITE_BASEURL"
