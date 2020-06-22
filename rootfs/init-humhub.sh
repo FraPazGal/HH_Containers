@@ -5,7 +5,7 @@ rm /var/www/humhub/protected/humhub/modules/installer/commands/InstallController
 cp InstallController.php /var/www/humhub/protected/humhub/commands
 
 cd /var/www/humhub/protected
-php yii install/write-db-config "$HH_MARIADB_IP" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS"
+php yii install/write-db-config "$HH_MARIADB_ADDRESS" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS"
 php yii install/install-db
 
 php yii install/set-base-url "$HH_SITE_BASEURL"
@@ -16,5 +16,5 @@ php yii install/create-admin-account "$HH_ADMIN_USERNAME" "$HH_ADMIN_EMAIL" "$HH
 
 php yii install/set-base-url "$HH_SITE_BASEURL"
 
-chown -R www-data:www-data /var/www/humhub/
+chown -R "$USER_UID":"$USER_GID" /var/www/humhub/
 chmod -R 755 /var/www/humhub/
