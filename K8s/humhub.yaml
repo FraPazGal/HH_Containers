@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: humhub-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: humhub
+  template:
+    metadata:
+      labels:
+        app: humhub
+    spec:
+      securityContext:
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+      - name: humhub-container
+        image: frapazgal/humhub_mariadb:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: HH_MARIADB_HOST
+          value: "mariadb-service"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: humhub-service
+spec:
+  selector:
+    app: humhub
+  ports:
+  - protocol: TCP
+    targetPort: 8080
+    port: 80
+    name: http
+  type: LoadBalancer
