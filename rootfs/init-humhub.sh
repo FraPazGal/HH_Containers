@@ -1,10 +1,15 @@
 #!bin/bash
 
-installation_file="/var/www/humhub/protected/humhub/modules/installer/commands/InstallController.php"
+installation_file="/var/www/humhub/protected/humhub/commands/InstallController.php"
 
-if [[ -e "$installation_file" ]]; then
+if [[ ! -e "$installation_file" ]]; then
 
    printf "Starting Humhub configuration %s\n"
+   mv /tmp/humhub-1.4.3/* /var/www/humhub
+
+   crontab -u "$USER_UID" -l | { cat; echo "0 * * * * /usr/bin/php /var/www/humhub/protected/yii queue/run >/dev/null 2>&1"; } | crontab -u "$USER_UID" -
+   crontab -u "$USER_UID" -l | { cat; echo "0 * * * * /usr/bin/php /var/www/humhub/protected/yii cron/run >/dev/null 2>&1"; } | crontab -u "$USER_UID" -
+
    rm /var/www/humhub/protected/humhub/modules/installer/commands/InstallController.php 
    cp InstallController.php /var/www/humhub/protected/humhub/commands
    cd /var/www/humhub/protected
@@ -30,6 +35,3 @@ else
    printf "Humhub already configured %s\n"
 
 fi
-
-chown -R "$USER_UID":"$USER_GID" /var/www/humhub/
-chmod -R 755 /var/www/humhub/

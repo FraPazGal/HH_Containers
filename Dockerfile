@@ -1,7 +1,7 @@
 FROM docker.io/bitnami/minideb:latest
 
 LABEL author="Fran"
-LABEL version="0.8"
+LABEL version="1.0"
 
 ARG UID=1001
 ARG GID=1001

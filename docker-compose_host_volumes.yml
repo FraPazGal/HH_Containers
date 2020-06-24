@@ -3,7 +3,7 @@ services:
   mariadb:
     image: 'docker.io/bitnami/mariadb:latest'
     volumes:
-      - 'humhub_db_data:/bitnami/mariadb'
+      - /path/to/mariadb-persitence:/bitnami/mariadb
     environment:
       - MARIADB_USER=nami
       - MARIADB_PASSWORD=janna
@@ -15,13 +15,8 @@ services:
       - '80:8080'
       - '443:8443'
     volumes:
-      - 'humhub_data:/var/www/humhub'
+      - /path/to/humhub-persistence:/var/www/humhub
     depends_on:
       - mariadb
     environment:
       - HH_MARIADB_HOST=mariadb
-volumes:
-  humhub_db_data:
-    driver: local
-  humhub_data:
-    driver: local

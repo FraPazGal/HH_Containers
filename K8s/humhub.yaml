@@ -24,6 +24,14 @@ spec:
         env:
         - name: HH_MARIADB_HOST
           value: "mariadb-service"
+        volumeMounts:
+        - mountPath: "/var/www/humhub"
+          name: humhub-data
+      volumes:
+      - name: humhub-data
+        persistentVolumeClaim:
+          claimName: humhub-pvc
+
 
 ---
 apiVersion: v1
