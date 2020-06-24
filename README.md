@@ -157,6 +157,7 @@ $ kubectl apply -f humhub.yaml
 
 - After the initial HumHub setup, the header doesn't display the name of the site. It is requiered to click `save` on Administration -> Settings -> General to reload the header.
 - Even with a sleep time of 6.5s at the start of the entrypoint file of the HumHub container, it may be possible that the MariaDB container requires a longer time to be up and running, failing the `docker-compose up`. If so, increase the sleep time in the `/rootfs/docker-entrypoint.sh` file.
+- Although they are properly configured, the app warns that the cron jobs are not set-up.
 
 ## Future Improvements
 
