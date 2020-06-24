@@ -10,7 +10,7 @@ services:
       - MARIADB_DATABASE=humhub_db
       - ALLOW_EMPTY_PASSWORD=yes
   humhub:
-    image: 'humhub:1.0'
+    image: 'frapazgal/humhub_mariadb:latest'
     ports:
       - '80:8080'
       - '443:8443'
