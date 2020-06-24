@@ -163,6 +163,7 @@ $ kubectl apply -f humhub.yaml
 - Environment variables input validation
 - HTTPS implemntation
 - SMTP implementation
+- Add the option of using the default HumHub site set-up
 - Better logs management
 - General code styling
 
