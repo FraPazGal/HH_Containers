@@ -151,6 +151,7 @@ $ kubectl apply -f humhub.yaml
 ## Known Issues
 
 - After the initial HumHub setup, the header doesn't display the name of the site. It is requiered to click `save` on Administration -> Settings -> General to reload the header.
+- Although they are properly configured, the app warns that the cron jobs are not set-up.
 
 ## Future Improvements
 
