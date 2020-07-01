@@ -6,18 +6,18 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mariadb
+      app: mariadb-app
   template:
     metadata:
       labels:
-        app: mariadb
+        app: mariadb-app
     spec:
       securityContext:
         runAsUser: 1001
         fsGroup: 1001
       containers:
       - name: mariadb-container
-        image: bitnami/mariadb:latest
+        image: bitnami/mariadb:10.5.4-debian-10-r4
         ports:
         - containerPort: 3306
         env:
@@ -41,10 +41,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mariadb-service
+  name: mariadb
 spec:
   selector:
-    app: mariadb
+    app: mariadb-app
   ports:
   - protocol: TCP
     port: 3306

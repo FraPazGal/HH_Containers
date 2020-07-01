@@ -14,24 +14,21 @@ spec:
     spec:
       securityContext:
         runAsUser: 1001
-        fsGroup: 1001
+        fsGroup: 0
       containers:
       - name: humhub-container
-        image: frapazgal/humhub_mariadb:latest
+        image: frapazgal/humhub:1.4.3-r1
         ports:
         - containerPort: 8080
           name: http
-        env:
-        - name: HH_MARIADB_HOST
-          value: "mariadb-service"
         volumeMounts:
         - mountPath: "/var/www/humhub"
           name: humhub-data
+        imagePullPolicy: Always
       volumes:
       - name: humhub-data
         persistentVolumeClaim:
           claimName: humhub-pvc
-
 
 ---
 apiVersion: v1

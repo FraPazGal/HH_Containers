@@ -15,38 +15,39 @@ $ docker-compose up -d
 
 ### Docker Run
 
-The HumHub-MariaDB Docker Image can be found on [Docker Hub](https://hub.docker.com/repository/docker/frapazgal/humhub_mariadb), so you only need to pull it to your pc.
+The HumHub Docker Image can be found on [Docker Hub](https://hub.docker.com/repository/docker/frapazgal/humhub), so you only need to pull it to your pc.
 
 ```sh
-$ docker pull frapazgal/humhub_mariadb:latest
+$ docker pull frapazgal/humhub:1.4.3-r1
 ```
-At the moment, there and only two versions of this image on the [Docker Hub Registry](https://hub.docker.com/repository/docker/frapazgal/humhub_mariadb/tags), both been identical, given the current development.
+At the moment, there and only two versions of this image on the [Docker Hub Registry](https://hub.docker.com/repository/docker/frapazgal/humhub/tags), both been identical, given the current development.
 
 You can also clone this repository and build the HumHub image yourself with the Dockefile and using the `docker build` command in the directory of the downloaded `Dockerfile`. 
 #### Clone and build your own image
 ```sh
 $ git clone https://github.com/FraPazGal/HH_Containers.git
-$ docker build -t frapazgal/humhub_mariadb:latest
+$ docker build -t frapazgal/humhub:1.4.3-r1 .
 ```
 
-Then you will just need to us the `docker run` command to create the Humhub and MariaDB containers. The HumHub container needs a database to work properly, so we will need to create a network to make communication between both containers possible. Given that we need to especify the database hostname to humhub, we will assign a subnet to the network and a static IP to the DB container.
+Then you will just need to us the `docker run` command to create both the Humhub and MariaDB containers. The HumHub container needs a database to work properly, so we will need to create a network to make communication between both containers possible. 
+
 #### Create a network
 ```sh
-$ docker network create --subnet=172.18.0.0/16 humhub-network
+$ docker network create humhub-network
 ```
 
 With our network created, we can now execute the `docker run` command to create the MariaDB container. We will also use the `docker volume create` command to create a volume for our MariaDb persistence.
 #### Create a data volume and a MariaDB container
 ```sh
-$ docker volume create --name humhub_db_data
-$ docker run -d --name humhub_db \
+$ docker volume create --name mariadb_data
+$ docker run -d --name mariadb \
     -e ALLOW_EMPTY_PASSWORD=yes \
     -e MARIADB_USER=nami \
     -e MARIADB_PASSWORD=janna \
     -e MARIADB_DATABASE=humhub_db \
-    --network humhub-network --ip 172.18.0.10 \
-    --volume humhub_db_data:/bitnami/mariadb \
-    bitnami/mariadb:latest
+    --network humhub-network \
+    --volume mariadb_data:/bitnami/mariadb \
+    bitnami/mariadb:10.5.4-debian-10-r4
 ```
 
 We have added several env variables to create the user and database that HumHub will use. This can be done after the MariaDB container is up, but it is easier to set it up just as we create the container. For more information regarding the env variables used, visit the [Bitnami MariaDB documentation](https://github.com/bitnami/bitnami-docker-mariadb#creating-a-database-user-on-first-run).
@@ -58,8 +59,9 @@ $ docker volume create --name humhub_data
 $ docker run -d --name humhub -p 80:8080 \
     --network humhub-network \
     --volume humhub_data:/var/www/humhub \
-    frapazgal/humhub_mariadb:latest
+    frapazgal/humhub:1.4.3-r1
 ```
+Keep in mind that the environment variable `HH_MARIADB_HOST` is what tells our HumHub container the hostname of our database. This hostname will be the same as the given name to the MariaDB container, *mariadb* by default.
 
 ## Data persistence
 
@@ -73,7 +75,7 @@ If we are using the command line and the `docker run` command to create our cont
 $ docker run -d --name humhub -p 80:8080 \
     --network humhub-network \
     --volume /path/to/humhub-persistence:/var/www/humhub \
-    frapazgal/humhub_mariadb:latest
+    frapazgal/humhub:1.4.3-r1
 ```
 
 ## Configuration
@@ -107,7 +109,7 @@ All of this data can be changed once your site is running.
 
 Remember that this values must match the ones given for the MariaDB environment variables container. 
 
-`HH_MARIADB_HOST`: database hostname. Default: **172.18.0.10**  
+`HH_MARIADB_HOST`: database hostname. Default: **mariadb**  
 `HH_MARIADB_DBNAME`: database name. Default: **humhub_db**  
 `HH_MARIADB_USER`: database username. Default: **nami**   
 `HH_MARIADB_USER_PASS`: password of the created database user. Default: **janna** 
@@ -120,13 +122,6 @@ These are the recommended minimum values given by the HumHub developers. In the 
 `APACHE_MAX_EXEC_TIME`: apache maximum execution time in seconds. Default: **300**  
 `APACHE_POST_MAX_FILESIZE`: apache maximum filesize post allowed. Default: **64M**  
 `APACHE_UPLOAD_MAX_FILESIZE`: apache maximum filesize upload allowed. Default: **64M**  
-
-#### Non-root user configuration
-
-The following two environment values cannot be changed directly, as they take their value from the ARG variables. Although not recommended, if you wish to run the container as another user, change those variables instead.
-
-`USER_UID`: UID of the non-root user that will run the container. Default: **$UID = 1001**  
-`USER_GID`: GID of the non-root user that will run the container. Default: **$GUD = 1001**  
 
 ## Kubernetes deployment
 
@@ -156,8 +151,6 @@ $ kubectl apply -f humhub.yaml
 ## Known Issues
 
 - After the initial HumHub setup, the header doesn't display the name of the site. It is requiered to click `save` on Administration -> Settings -> General to reload the header.
-- Even with a sleep time of 6.5s at the start of the entrypoint file of the HumHub container, it may be possible that the MariaDB container requires a longer time to be up and running, failing the `docker-compose up`. If so, increase the sleep time in the `/rootfs/docker-entrypoint.sh` file.
-- Although they are properly configured, the app warns that the cron jobs are not set-up.
 
 ## Future Improvements
 
@@ -167,4 +160,5 @@ $ kubectl apply -f humhub.yaml
 - Add the option of using the default HumHub site set-up
 - Better logs management
 - General code styling
+- Update to the newest HumHub released version
 

@@ -5,17 +5,20 @@ installation_file="/var/www/humhub/protected/humhub/commands/InstallController.p
 if [[ ! -e "$installation_file" ]]; then
 
    printf "Starting Humhub configuration %s\n"
-   mv /tmp/humhub-1.4.3/* /var/www/humhub
 
-   crontab -u "$USER_UID" -l | { cat; echo "0 * * * * /usr/bin/php /var/www/humhub/protected/yii queue/run >/dev/null 2>&1"; } | crontab -u "$USER_UID" -
-   crontab -u "$USER_UID" -l | { cat; echo "0 * * * * /usr/bin/php /var/www/humhub/protected/yii cron/run >/dev/null 2>&1"; } | crontab -u "$USER_UID" -
+   mv /tmp/humhub/* /var/www/humhub
+   rm -r /tmp/humhub
 
-   rm /var/www/humhub/protected/humhub/modules/installer/commands/InstallController.php 
-   cp InstallController.php /var/www/humhub/protected/humhub/commands
+   printf "Creating crons %s\n"
+   >/dev/null 2>&1 crontab -l | { cat; echo "* * * * * /usr/bin/php /var/www/humhub/protected/yii queue/run >/dev/null 2>&1"; } | crontab -
+   crontab -l | { cat; echo "* * * * * /usr/bin/php /var/www/humhub/protected/yii cron/run >/dev/null 2>&1"; } | crontab -
+
+   rm /var/www/humhub/protected/humhub/modules/installer/commands/InstallController.php
+   cp /InstallController.php /var/www/humhub/protected/humhub/commands
    cd /var/www/humhub/protected
 
    printf "Setting database connection %s\n"
-   php yii install/write-db-config "$HH_MARIADB_HOST" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS" > /dev/null   
+   php yii install/write-db-config "$HH_MARIADB_HOST" "$HH_MARIADB_DBNAME" "$HH_MARIADB_USER" "$HH_MARIADB_USER_PASS"
    php yii install/install-db > /dev/null
 
    printf "Setting site config %s\n"
@@ -35,3 +38,4 @@ else
    printf "Humhub already configured %s\n"
 
 fi
+

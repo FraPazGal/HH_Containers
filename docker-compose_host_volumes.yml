@@ -1,7 +1,7 @@
 version: '2'
 services:
   mariadb:
-    image: 'docker.io/bitnami/mariadb:latest'
+    image: 'docker.io/bitnami/mariadb:10.5.4-debian-10-r4'
     volumes:
       - /path/to/mariadb-persitence:/bitnami/mariadb
     environment:
@@ -10,7 +10,7 @@ services:
       - MARIADB_DATABASE=humhub_db
       - ALLOW_EMPTY_PASSWORD=yes
   humhub:
-    image: 'frapazgal/humhub_mariadb:latest'
+    image: 'frapazgal/humhub:1.4.3-r1'
     ports:
       - '80:8080'
       - '443:8443'
@@ -18,5 +18,3 @@ services:
       - /path/to/humhub-persistence:/var/www/humhub
     depends_on:
       - mariadb
-    environment:
-      - HH_MARIADB_HOST=mariadb
